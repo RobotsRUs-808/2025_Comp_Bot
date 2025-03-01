@@ -1,5 +1,7 @@
 package frc.robot;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
+
 public class Constants {
     public static final class LiftConstants
     {
@@ -8,5 +10,26 @@ public class Constants {
 
         public static final boolean lift_motor1_inverted = false;
         public static final boolean lift_motor2_inverted = false;
+
+        public static final double lift_manual_speed = 0.75;
+
+        private static final Slot0Configs lift_gains = new Slot0Configs()
+        .withKP(0.1).withKI(0).withKD(0)
+        .withKS(0).withKV(0);
+    }
+
+    public static final class ManipulatorConstants
+    {
+        public static final int chute_motor_id          = 42;
+        public static final int algae_intake_motor_id   = 43;
+        public static final int algae_arm_motor_id      = 44;
+
+        public static final boolean chute_inverted = false;
+        public static final boolean algae_intake_inverted = false;
+        public static final boolean algae_arm_inverted = false;
+
+        public static final double chute_speed = 1;
+        public static final double algae_intake_speed = 1;
+        public static final double algae_arm_speed = .75;
     }
 }

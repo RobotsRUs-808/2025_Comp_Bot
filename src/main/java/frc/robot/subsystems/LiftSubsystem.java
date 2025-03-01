@@ -13,6 +13,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -48,8 +49,9 @@ public class LiftSubsystem extends SubsystemBase {
     );
 
   /** Creates a new LiftSubsystem. */
-  public LiftSubsystem() {
-    TalonFXConfiguration lift_motor_config = new TalonFXConfiguration();
+  public LiftSubsystem() {    
+    TalonFXConfiguration lift_motor_config = new TalonFXConfiguration().withMotorOutput(
+      new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
     //Set lift motor pid values
     lift_motor_config.Slot0.kP = 1;
     lift_motor_config.Slot0.kI = 0;
@@ -61,6 +63,8 @@ public class LiftSubsystem extends SubsystemBase {
     m_lift_motor1.getConfigurator().apply(lift_motor_config);
     m_lift_motor2.getConfigurator().apply(lift_motor_config);
     m_lift_motor2.setControl(new Follower(LiftConstants.lift_motor1_id, true));
+
+    zeroLiftPos();
 
   }
 
@@ -90,6 +94,10 @@ public class LiftSubsystem extends SubsystemBase {
   public void zeroLiftPos()
   {
     m_lift_motor1.setPosition(0);
+  }
+
+  public double getCurrent() {
+    return m_lift_motor1.getTorqueCurrent().getValueAsDouble();
   }
   /**
    * Example command factory method.
