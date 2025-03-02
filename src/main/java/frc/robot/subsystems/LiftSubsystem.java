@@ -16,6 +16,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,6 +28,7 @@ import frc.robot.Constants.LiftConstants;
 public class LiftSubsystem extends SubsystemBase {
     TalonFX m_lift_motor1 = new TalonFX(LiftConstants.lift_motor1_id);
     TalonFX m_lift_motor2 = new TalonFX(LiftConstants.lift_motor2_id);
+    DigitalInput lift_bot_limit_switch = new DigitalInput(LiftConstants.bot_limit_switch_id);
 
   private final ElevatorFeedforward elevFF = new ElevatorFeedforward(
     0,0,0,0
@@ -62,7 +64,7 @@ public class LiftSubsystem extends SubsystemBase {
     
     m_lift_motor1.getConfigurator().apply(lift_motor_config);
     m_lift_motor2.getConfigurator().apply(lift_motor_config);
-    m_lift_motor2.setControl(new Follower(LiftConstants.lift_motor1_id, true));
+    m_lift_motor2.setControl(new Follower(LiftConstants.lift_motor1_id, false));
 
     zeroLiftPos();
 
@@ -70,7 +72,13 @@ public class LiftSubsystem extends SubsystemBase {
 
   public void setPower(double liftPower)
   {
-    m_lift_motor1.set(liftPower);
+    if(liftPower > 1)
+      m_lift_motor1.set(liftPower);
+    else
+      if (lift_bot_limit_switch.get())
+        m_lift_motor1.set(Math.abs(liftPower));
+      else
+        m_lift_motor1.set(liftPower);
     //m_lift_motor2.set(liftPower);
   }
 
@@ -131,6 +139,10 @@ public class LiftSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Lift Position", getPos());
+    SmartDashboard.putBoolean("At Pickup", (LiftConstants.pickup_height - LiftConstants.height_tolerance) < getPos() && getPos() < (LiftConstants.pickup_height + LiftConstants.height_tolerance));
+    SmartDashboard.putBoolean("At L1", (LiftConstants.L1_height - LiftConstants.height_tolerance) < getPos() && getPos() < (LiftConstants.L1_height + LiftConstants.height_tolerance));
+    SmartDashboard.putBoolean("At L2", (LiftConstants.L2_height - LiftConstants.height_tolerance) < getPos() && getPos() < (LiftConstants.L2_height + LiftConstants.height_tolerance));
+    SmartDashboard.putBoolean("At L3", (LiftConstants.L3_height - LiftConstants.height_tolerance) < getPos() && getPos() < (LiftConstants.L3_height + LiftConstants.height_tolerance));
   }
 
   @Override

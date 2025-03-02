@@ -53,6 +53,7 @@ public class RobotContainer {
     private final Command c_lift_up = new InstantCommand( () -> lift_subsystem.setPower(LiftConstants.lift_manual_speed) );
     private final Command c_lift_down = new InstantCommand( () -> lift_subsystem.setPower(-LiftConstants.lift_manual_speed) );
     private final Command c_lift_off = new InstantCommand( () -> lift_subsystem.setPower(0) );
+    private final Command c_lift_zero_enc = new InstantCommand( () -> lift_subsystem.zeroLiftPos() );
 
     private final Command c_algae_in = new InstantCommand( () -> algaeArmSubsystem.setIntakePower(ManipulatorConstants.algae_intake_speed));
     private final Command c_algae_out = new InstantCommand( () -> algaeArmSubsystem.setIntakePower(-ManipulatorConstants.algae_intake_speed));
@@ -71,19 +72,19 @@ public class RobotContainer {
 
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
+        // and Y is defined as to the left according to WPILib convention. * (30 > 45 ? .1 : 1)
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-gamepad1.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-gamepad1.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                drive.withVelocityX(-gamepad1.getLeftY() * MaxSpeed * (SmartDashboard.getNumber("Lift Position", 101) > 100 ? .1 : 1)) // Drive forward with negative Y (forward)
+                    .withVelocityY(-gamepad1.getLeftX() * MaxSpeed * (SmartDashboard.getNumber("Lift Position", 101) > 100 ? .1 : 1)) // Drive left with negative X (left)
                     .withRotationalRate(-gamepad1.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
 
         chuteSubsystem.setDefaultCommand(
             new InstantCommand( 
-                () -> chuteSubsystem.setPower(gamepad1.getRightTriggerAxis()-gamepad1.getLeftTriggerAxis())
+                () -> chuteSubsystem.setPower(gamepad1.getRightTriggerAxis()-gamepad1.getLeftTriggerAxis()), chuteSubsystem
             )
         );
 
@@ -107,12 +108,13 @@ public class RobotContainer {
 
         gamepad1.rightBumper().onTrue(c_lift_up).onFalse(c_lift_off);
         gamepad1.leftBumper().onTrue(c_lift_down).onFalse(c_lift_off);
+        gamepad1.povLeft().onTrue(c_lift_zero_enc);
 
         gamepad1.a().onTrue(c_algae_in).onFalse(c_algae_off);
         gamepad1.b().onTrue(c_algae_out).onFalse(c_algae_off);
 
         gamepad1.povUp().onTrue(c_algae_arm_up).onFalse(c_algae_arm_off);
-        gamepad1.povDown().onTrue(c_algae_arm_up).onFalse(c_algae_arm_off);
+        gamepad1.povDown().onTrue(c_algae_arm_down).onFalse(c_algae_arm_off);
 
         drivetrain.registerTelemetry(logger::telemeterize);
         //gamepad1.rightBumper().whileTrue(lift_subsystem.setLiftPower(1), lift_subsystem.setLiftPower(0));

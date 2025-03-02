@@ -7,6 +7,7 @@ public class Constants {
     {
         public static final int lift_motor1_id = 40; 
         public static final int lift_motor2_id = 41; 
+        public static final int bot_limit_switch_id = 0;
 
         public static final boolean lift_motor1_inverted = false;
         public static final boolean lift_motor2_inverted = false;
@@ -16,6 +17,12 @@ public class Constants {
         private static final Slot0Configs lift_gains = new Slot0Configs()
         .withKP(0.1).withKI(0).withKD(0)
         .withKS(0).withKV(0);
+
+        public static final double height_tolerance = 5; // +-amount 
+        public static final double pickup_height = 45.8;
+        public static final double L1_height = 45.8;
+        public static final double L2_height = 45.8;
+        public static final double L3_height = 45.8;
     }
 
     public static final class ManipulatorConstants
