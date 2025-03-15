@@ -47,6 +47,6 @@ public class Constants {
         public static final double kLevel1 = 1.2;
         public static final double kLevel2 = 1.8;
         public static final double kLevel3 = 3.3;
-        public static final double kLevel4 = 5.25;
+        public static final double kLevel4 = 5.35;
       }
 }

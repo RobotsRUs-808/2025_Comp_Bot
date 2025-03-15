@@ -50,7 +50,7 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     public LiftSubsystem lift_subsystem = new LiftSubsystem();
-    //public ChuteSubsystem chuteSubsystem = new ChuteSubsystem();
+    public ChuteSubsystem chuteSubsystem = new ChuteSubsystem();
     //public AlgaeArmSubsystem algaeArmSubsystem = new AlgaeArmSubsystem();
 
     //private final double liftpow = .75;
@@ -79,20 +79,20 @@ public class RobotContainer {
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention. * (30 > 45 ? .1 : 1)
-        //drivetrain.setDefaultCommand(
-        //    // Drivetrain will execute this command periodically
-        //    drivetrain.applyRequest(() ->
-        //        drive.withVelocityX(-gamepad1.getLeftY() * MaxSpeed * (SmartDashboard.getNumber("Lift Position", 101) > 100 ? .1 : 1)) // Drive forward with negative Y (forward)
-        //            .withVelocityY(-gamepad1.getLeftX() * MaxSpeed * (SmartDashboard.getNumber("Lift Position", 101) > 100 ? .1 : 1)) // Drive left with negative X (left)
-        //            .withRotationalRate(-gamepad1.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        //    )
-        //);
+        drivetrain.setDefaultCommand(
+            // Drivetrain will execute this command periodically
+            drivetrain.applyRequest(() ->
+                drive.withVelocityX(-gamepad1.getLeftY() * MaxSpeed * (SmartDashboard.getNumber("Lift Position", 101) > 100 ? .1 : 1)) // Drive forward with negative Y (forward)
+                    .withVelocityY(-gamepad1.getLeftX() * MaxSpeed * (SmartDashboard.getNumber("Lift Position", 101) > 100 ? .1 : 1)) // Drive left with negative X (left)
+                    .withRotationalRate(-gamepad1.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            )
+        );
 
-        //chuteSubsystem.setDefaultCommand(
-        //    new InstantCommand( 
-        //        () -> chuteSubsystem.setPower((gamepad2.getRightTriggerAxis()-gamepad2.getLeftTriggerAxis()) * ManipulatorConstants.chute_speed), chuteSubsystem
-        //    )
-        //);
+        chuteSubsystem.setDefaultCommand(
+            new InstantCommand( 
+                () -> chuteSubsystem.setPower((gamepad1.getRightTriggerAxis()-gamepad1.getLeftTriggerAxis()) * ManipulatorConstants.chute_speed), chuteSubsystem
+            )
+        );
 //
         //algaeArmSubsystem.setDefaultCommand(
         //    new InstantCommand( 
