@@ -34,16 +34,16 @@ public class LiftCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (lift_pow > 0){
-      lift_subsystem.setPower(lift_pow);
-    }
-    else
-    {
-      if (lift_subsystem.getLimitSwitch())
-        lift_subsystem.setPower(0);
-      else
-        lift_subsystem.setPower(lift_pow);
-    }
+    //if (lift_pow > 0){
+    //  lift_subsystem.setPower(lift_pow);
+    //}
+    //else
+    //{
+    //  if (lift_subsystem.getLimitSwitch())
+    //    lift_subsystem.setPower(0);
+    //  else
+    //    lift_subsystem.setPower(lift_pow);
+    //}
   }
 
   // Called once the command ends or is interrupted.

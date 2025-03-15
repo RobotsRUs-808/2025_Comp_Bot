@@ -35,9 +35,10 @@ import frc.robot.Constants.ElevatorSetpoints;
 public class LiftSubsystem extends SubsystemBase {
     TalonFX m_lift_motor1 = new TalonFX(LiftConstants.lift_motor1_id);
     TalonFX m_lift_motor2 = new TalonFX(LiftConstants.lift_motor2_id);
-    DigitalInput lift_bot_limit_switch = new DigitalInput(LiftConstants.bot_limit_switch_id);
+    //DigitalInput lift_bot_limit_switch = new DigitalInput(LiftConstants.bot_limit_switch_id);
     
     public enum Setpoint {
+      kBottom,
       kFeederStation,
       kLevel1,
       kLevel2,
@@ -47,12 +48,12 @@ public class LiftSubsystem extends SubsystemBase {
       private Encoder lift_encoder = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
       private boolean wasResetByButton = false;
       private boolean wasResetByLimit = false;
-      private double elevatorCurrentTarget = ElevatorSetpoints.kFeederStation;
+      private double elevatorCurrentTarget = ElevatorSetpoints.kBottom;
       private ProfiledPIDController liftPID = new ProfiledPIDController(
-          1, 
+          4, 
           0.0, 
           0, 
-          new TrapezoidProfile.Constraints(1, .1)
+          new TrapezoidProfile.Constraints(2, 1)
           );
       
 
@@ -134,9 +135,9 @@ public class LiftSubsystem extends SubsystemBase {
     return m_lift_motor1.getTorqueCurrent().getValueAsDouble();
   }
 
-  public boolean getLimitSwitch() {
-    return lift_bot_limit_switch.get();
-  }
+  //public boolean getLimitSwitch() {
+  //  return lift_bot_limit_switch.get();
+  //}
   /**
    * Example command factory method.
    *
@@ -192,6 +193,9 @@ public class LiftSubsystem extends SubsystemBase {
     return runOnce(
         () -> {
           switch (setpoint) {
+            case kBottom:
+              elevatorCurrentTarget = ElevatorSetpoints.kBottom;
+              break;
             case kFeederStation:
               elevatorCurrentTarget = ElevatorSetpoints.kFeederStation;
               break;
