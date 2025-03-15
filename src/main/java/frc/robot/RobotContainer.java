@@ -26,6 +26,7 @@ import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.ChuteSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.LiftSubsystem;
+import frc.robot.subsystems.LiftSubsystem.Setpoint;
 import frc.robot.commands.*;
 
 public class RobotContainer {
@@ -99,11 +100,11 @@ public class RobotContainer {
             )
         );
 
-        lift_subsystem.setDefaultCommand(
-            new InstantCommand( 
-                () -> lift_subsystem.setPower(-MathUtil.applyDeadband(gamepad2.getRightY(), .1) * LiftConstants.lift_manual_speed), lift_subsystem
-            )
-        );
+        //lift_subsystem.setDefaultCommand(
+        //    new InstantCommand( 
+        //        () -> lift_subsystem.setPower(-MathUtil.applyDeadband(gamepad2.getRightY(), .1) * LiftConstants.lift_manual_speed), lift_subsystem
+        //    )
+        //);
 
 
         //lift_subsystem.setDefaultCommand(lift_subsystem.setLiftPower(gamepad1.getRightTriggerAxis()-gamepad1.getLeftTriggerAxis()) );
@@ -133,8 +134,14 @@ public class RobotContainer {
         gamepad2.a().onTrue(c_algae_in).onFalse(c_algae_off);
         gamepad2.b().onTrue(c_algae_out).onFalse(c_algae_off);
 
-        gamepad2.povUp().onTrue(c_algae_arm_up).onFalse(c_algae_arm_off);
-        gamepad2.povDown().onTrue(c_algae_arm_down).onFalse(c_algae_arm_off);
+        //gamepad2.povUp().onTrue(c_algae_arm_up).onFalse(c_algae_arm_off);
+        //gamepad2.povDown().onTrue(c_algae_arm_down).onFalse(c_algae_arm_off);
+
+        gamepad1.rightBumper().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kFeederStation));
+        gamepad1.povDown().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kLevel1));
+        gamepad1.povLeft().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kLevel2));
+        gamepad1.povRight().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kLevel3));
+        gamepad1.povUp().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kLevel4));
 
 
         drivetrain.registerTelemetry(logger::telemeterize);

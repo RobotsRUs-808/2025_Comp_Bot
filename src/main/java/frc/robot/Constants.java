@@ -40,4 +40,12 @@ public class Constants {
         public static final double algae_intake_speed = 1;
         public static final double algae_arm_speed = .15;
     }
+
+    public static final class ElevatorSetpoints {
+        public static final double kFeederStation = 0.00;
+        public static final double kLevel1 = 0.15;
+        public static final double kLevel2 = 0.32;
+        public static final double kLevel3 = 0.3;
+        public static final double kLevel4 = 0.4;
+      }
 }
