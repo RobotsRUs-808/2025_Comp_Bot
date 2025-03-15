@@ -19,10 +19,11 @@ public class Constants {
         .withKS(0).withKV(0);
 
         public static final double height_tolerance = 5; // +-amount 
-        public static final double pickup_height = 45.8;
+        public static final double pickup_height = 34.5;
         public static final double L1_height = 45.8;
-        public static final double L2_height = 45.8;
-        public static final double L3_height = 45.8;
+        public static final double L2_height = 27.1;
+        public static final double L3_height = 89;
+        public static final double L4_height = 180;
     }
 
     public static final class ManipulatorConstants
@@ -35,8 +36,8 @@ public class Constants {
         public static final boolean algae_intake_inverted = false;
         public static final boolean algae_arm_inverted = false;
 
-        public static final double chute_speed = 1;
+        public static final double chute_speed = .2;
         public static final double algae_intake_speed = 1;
-        public static final double algae_arm_speed = .75;
+        public static final double algae_arm_speed = .15;
     }
 }

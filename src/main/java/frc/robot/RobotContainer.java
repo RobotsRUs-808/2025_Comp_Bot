@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,6 +26,7 @@ import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.ChuteSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.LiftSubsystem;
+import frc.robot.commands.*;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -40,6 +42,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController gamepad1 = new CommandXboxController(0);
+    private final CommandXboxController gamepad2 = new CommandXboxController(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -63,6 +66,8 @@ public class RobotContainer {
     private final Command c_algae_arm_down = new InstantCommand( () -> algaeArmSubsystem.setArmPower(-ManipulatorConstants.algae_arm_speed));
     private final Command c_algae_arm_off = new InstantCommand( () -> algaeArmSubsystem.setArmPower(0));
 
+    private final Command c_chute_shoot = new InstantCommand(() -> chuteSubsystem.setPower(1));
+
 
     public RobotContainer() {
         autoChooser = AutoBuilder.buildAutoChooser();
@@ -84,17 +89,29 @@ public class RobotContainer {
 
         chuteSubsystem.setDefaultCommand(
             new InstantCommand( 
-                () -> chuteSubsystem.setPower(gamepad1.getRightTriggerAxis()-gamepad1.getLeftTriggerAxis()), chuteSubsystem
+                () -> chuteSubsystem.setPower((gamepad2.getRightTriggerAxis()-gamepad2.getLeftTriggerAxis()) * ManipulatorConstants.chute_speed), chuteSubsystem
+            )
+        );
+
+        algaeArmSubsystem.setDefaultCommand(
+            new InstantCommand( 
+                () -> algaeArmSubsystem.setArmPower(-gamepad2.getLeftY() * ManipulatorConstants.algae_arm_speed), algaeArmSubsystem
+            )
+        );
+
+        lift_subsystem.setDefaultCommand(
+            new InstantCommand( 
+                () -> lift_subsystem.setPower(-MathUtil.applyDeadband(gamepad2.getRightY(), .1) * LiftConstants.lift_manual_speed), lift_subsystem
             )
         );
 
 
         //lift_subsystem.setDefaultCommand(lift_subsystem.setLiftPower(gamepad1.getRightTriggerAxis()-gamepad1.getLeftTriggerAxis()) );
 
-        gamepad1.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        /* gamepad1.a().whileTrue(drivetrain.applyRequest(() -> brake));
         gamepad1.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-gamepad1.getLeftY(), -gamepad1.getLeftX()))
-        ));
+        )); */
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -106,15 +123,19 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         gamepad1.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        gamepad1.rightBumper().onTrue(c_lift_up).onFalse(c_lift_off);
-        gamepad1.leftBumper().onTrue(c_lift_down).onFalse(c_lift_off);
-        gamepad1.povLeft().onTrue(c_lift_zero_enc);
+        /* gamepad2.rightBumper().onTrue(new LiftCommand(lift_subsystem, LiftConstants.lift_manual_speed));
+        gamepad2.leftBumper().onTrue(new LiftCommand(lift_subsystem, -LiftConstants.lift_manual_speed));
+ */
+        // gamepad2.rightBumper().onTrue(c_lift_up).onFalse(c_lift_off);
+        // gamepad2.leftBumper().onTrue(c_lift_down).onFalse(c_lift_off);
+        gamepad2.povLeft().onTrue(c_lift_zero_enc);
 
-        gamepad1.a().onTrue(c_algae_in).onFalse(c_algae_off);
-        gamepad1.b().onTrue(c_algae_out).onFalse(c_algae_off);
+        gamepad2.a().onTrue(c_algae_in).onFalse(c_algae_off);
+        gamepad2.b().onTrue(c_algae_out).onFalse(c_algae_off);
 
-        gamepad1.povUp().onTrue(c_algae_arm_up).onFalse(c_algae_arm_off);
-        gamepad1.povDown().onTrue(c_algae_arm_down).onFalse(c_algae_arm_off);
+        gamepad2.povUp().onTrue(c_algae_arm_up).onFalse(c_algae_arm_off);
+        gamepad2.povDown().onTrue(c_algae_arm_down).onFalse(c_algae_arm_off);
+
 
         drivetrain.registerTelemetry(logger::telemeterize);
         //gamepad1.rightBumper().whileTrue(lift_subsystem.setLiftPower(1), lift_subsystem.setLiftPower(0));

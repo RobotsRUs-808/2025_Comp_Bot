@@ -72,13 +72,14 @@ public class LiftSubsystem extends SubsystemBase {
 
   public void setPower(double liftPower)
   {
-    if(liftPower > 1)
+    m_lift_motor1.set(liftPower);
+    /* if(liftPower > 1)
       m_lift_motor1.set(liftPower);
     else
       if (lift_bot_limit_switch.get())
         m_lift_motor1.set(Math.abs(liftPower));
       else
-        m_lift_motor1.set(liftPower);
+        m_lift_motor1.set(liftPower); */
     //m_lift_motor2.set(liftPower);
   }
 
@@ -106,6 +107,10 @@ public class LiftSubsystem extends SubsystemBase {
 
   public double getCurrent() {
     return m_lift_motor1.getTorqueCurrent().getValueAsDouble();
+  }
+
+  public boolean getLimitSwitch() {
+    return lift_bot_limit_switch.get();
   }
   /**
    * Example command factory method.
@@ -143,6 +148,7 @@ public class LiftSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("At L1", (LiftConstants.L1_height - LiftConstants.height_tolerance) < getPos() && getPos() < (LiftConstants.L1_height + LiftConstants.height_tolerance));
     SmartDashboard.putBoolean("At L2", (LiftConstants.L2_height - LiftConstants.height_tolerance) < getPos() && getPos() < (LiftConstants.L2_height + LiftConstants.height_tolerance));
     SmartDashboard.putBoolean("At L3", (LiftConstants.L3_height - LiftConstants.height_tolerance) < getPos() && getPos() < (LiftConstants.L3_height + LiftConstants.height_tolerance));
+    SmartDashboard.putBoolean("At L4", (LiftConstants.L4_height - LiftConstants.height_tolerance) < getPos() && getPos() < (LiftConstants.L4_height + LiftConstants.height_tolerance));
   }
 
   @Override
