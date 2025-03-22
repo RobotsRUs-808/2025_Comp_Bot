@@ -29,6 +29,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants.LiftConstants;
+import frc.robot.Constants;
 import frc.robot.Constants.ElevatorSetpoints;
 
 
@@ -55,7 +56,7 @@ public class LiftSubsystem extends SubsystemBase {
           0, 
           new TrapezoidProfile.Constraints(2, 1)
           );
-      
+    private double current_trim;
 
   /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
     private final SysIdRoutine m_sysIdRoutineLift = new SysIdRoutine(
@@ -90,8 +91,13 @@ public class LiftSubsystem extends SubsystemBase {
     m_lift_motor2.setControl(new Follower(LiftConstants.lift_motor1_id, false));
 
     zeroLiftPos();
+
+    //Set the encoder to revolutions with 2048 pulses per revolution
     lift_encoder.setDistancePerPulse(0.00048828125);
     lift_encoder.reset();
+
+    //Trim the lift based on initial trim value
+    current_trim = Constants.LiftConstants.init_lift_trim;
   }
 
 
@@ -119,11 +125,6 @@ public class LiftSubsystem extends SubsystemBase {
   {
     m_lift_motor1.set(0);
     m_lift_motor2.set(0);
-  }
-
-  public double getPos()
-  {
-    return m_lift_motor1.getPosition(true).getValueAsDouble();
   }
 
   public void zeroLiftPos()
@@ -167,22 +168,29 @@ public class LiftSubsystem extends SubsystemBase {
   } */
   @Override
   public void periodic() {
+    //Function that does the lift movement based elevatorCurrentTarget and profiledPIDController
     moveToSetpoint();
+
+    //Smart Dashboard data
     SmartDashboard.putNumber("Lift External Position", getExternalEncPos());
     SmartDashboard.putNumber("PID Request", liftPID.calculate(lift_encoder.getDistance(), elevatorCurrentTarget));
     SmartDashboard.putNumber("elevatorCurrentTarget", elevatorCurrentTarget);
-    // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Lift Position", getPos());
-    SmartDashboard.putBoolean("At Pickup", (LiftConstants.pickup_height - LiftConstants.height_tolerance) < getPos() && getPos() < (LiftConstants.pickup_height + LiftConstants.height_tolerance));
-    SmartDashboard.putBoolean("At L1", (LiftConstants.L1_height - LiftConstants.height_tolerance) < getPos() && getPos() < (LiftConstants.L1_height + LiftConstants.height_tolerance));
-    SmartDashboard.putBoolean("At L2", (LiftConstants.L2_height - LiftConstants.height_tolerance) < getPos() && getPos() < (LiftConstants.L2_height + LiftConstants.height_tolerance));
-    SmartDashboard.putBoolean("At L3", (LiftConstants.L3_height - LiftConstants.height_tolerance) < getPos() && getPos() < (LiftConstants.L3_height + LiftConstants.height_tolerance));
-    SmartDashboard.putBoolean("At L4", (LiftConstants.L4_height - LiftConstants.height_tolerance) < getPos() && getPos() < (LiftConstants.L4_height + LiftConstants.height_tolerance));
+    SmartDashboard.putNumber("current trim", current_trim);
+    //SmartDashboard.putNumber("Lift Position", getPos());
+    //SmartDashboard.putBoolean("At Pickup", (LiftConstants.pickup_height - LiftConstants.height_tolerance) < getPos() && getPos() < (LiftConstants.pickup_height + LiftConstants.height_tolerance));
+    //SmartDashboard.putBoolean("At L1", (LiftConstants.L1_height - LiftConstants.height_tolerance) < getPos() && getPos() < (LiftConstants.L1_height + LiftConstants.height_tolerance));
+    //SmartDashboard.putBoolean("At L2", (LiftConstants.L2_height - LiftConstants.height_tolerance) < getPos() && getPos() < (LiftConstants.L2_height + LiftConstants.height_tolerance));
+    //SmartDashboard.putBoolean("At L3", (LiftConstants.L3_height - LiftConstants.height_tolerance) < getPos() && getPos() < (LiftConstants.L3_height + LiftConstants.height_tolerance));
+    //SmartDashboard.putBoolean("At L4", (LiftConstants.L4_height - LiftConstants.height_tolerance) < getPos() && getPos() < (LiftConstants.L4_height + LiftConstants.height_tolerance));
   }
 
   private void moveToSetpoint() {
     //liftClosedLoopController.setReference(elevatorCurrentTarget, ControlType.kPosition);
-    m_lift_motor1.setVoltage(liftPID.calculate(lift_encoder.getDistance(), elevatorCurrentTarget));
+    m_lift_motor1.setVoltage(liftPID.calculate(lift_encoder.getDistance(), elevatorCurrentTarget+current_trim));
+  }
+
+  private void setTrim(double trim) {
+    elevatorCurrentTarget += trim;
   }
 
   public double getExternalEncPos() {
@@ -212,6 +220,21 @@ public class LiftSubsystem extends SubsystemBase {
               elevatorCurrentTarget = ElevatorSetpoints.kLevel4;
               break;
           }
+        });
+  }
+
+  //trim commands. Modifies the elevatorCurrentTarget by a small amount
+  public Command incrementTrimCmd() {
+    return runOnce(
+        () -> {
+          setTrim(current_trim + .01);
+        });
+  }
+
+  public Command decrementTrimCmd() {
+    return runOnce(
+        () -> {
+          setTrim(current_trim - .01);
         });
   }
 

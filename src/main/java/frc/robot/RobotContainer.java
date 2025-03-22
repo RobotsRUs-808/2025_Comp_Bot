@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -73,6 +74,7 @@ public class RobotContainer {
     public RobotContainer() {
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Mode", autoChooser);
+        CameraServer.startAutomaticCapture();
         configureBindings();
     }
 
@@ -143,6 +145,9 @@ public class RobotContainer {
         gamepad2.povLeft().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kLevel2));
         gamepad2.povRight().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kLevel3));
         gamepad2.povUp().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kLevel4));
+
+        gamepad2.a().onTrue(lift_subsystem.decrementTrimCmd());
+        gamepad2.y().onTrue(lift_subsystem.incrementTrimCmd());
 
 
         drivetrain.registerTelemetry(logger::telemeterize);

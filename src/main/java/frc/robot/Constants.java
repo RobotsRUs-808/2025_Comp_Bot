@@ -14,16 +14,14 @@ public class Constants {
 
         public static final double lift_manual_speed = 0.75;
 
-        private static final Slot0Configs lift_gains = new Slot0Configs()
-        .withKP(0.1).withKI(0).withKD(0)
-        .withKS(0).withKV(0);
+        //public static final double height_tolerance = 5; // +-amount 
+        //public static final double pickup_height = 34.5;
+        //public static final double L1_height = 45.8;
+        //public static final double L2_height = 27.1;
+        //public static final double L3_height = 89;
+        //public static final double L4_height = 180;
 
-        public static final double height_tolerance = 5; // +-amount 
-        public static final double pickup_height = 34.5;
-        public static final double L1_height = 45.8;
-        public static final double L2_height = 27.1;
-        public static final double L3_height = 89;
-        public static final double L4_height = 180;
+        public static final double init_lift_trim = 0; //This value is for trimming the lift height based on field.
     }
 
     public static final class ManipulatorConstants
