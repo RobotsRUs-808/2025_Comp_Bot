@@ -31,7 +31,7 @@ import frc.robot.commands.*;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxAngularRate = RotationsPerSecond.of(1).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -90,7 +90,7 @@ public class RobotContainer {
 
         chuteSubsystem.setDefaultCommand(
             new InstantCommand( 
-                () -> chuteSubsystem.setPower((gamepad1.getRightTriggerAxis()-gamepad1.getLeftTriggerAxis()) * ManipulatorConstants.chute_speed), chuteSubsystem
+                () -> chuteSubsystem.setPower((gamepad2.getRightTriggerAxis()-gamepad2.getLeftTriggerAxis()) * ManipulatorConstants.chute_speed), chuteSubsystem
             )
         );
 //
@@ -137,12 +137,12 @@ public class RobotContainer {
         //gamepad2.povUp().onTrue(c_algae_arm_up).onFalse(c_algae_arm_off);
         //gamepad2.povDown().onTrue(c_algae_arm_down).onFalse(c_algae_arm_off);
 
-        gamepad1.leftBumper().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kBottom));
-        gamepad1.rightBumper().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kFeederStation));
-        gamepad1.povDown().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kLevel1));
-        gamepad1.povLeft().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kLevel2));
-        gamepad1.povRight().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kLevel3));
-        gamepad1.povUp().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kLevel4));
+        gamepad2.leftBumper().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kBottom));
+        gamepad2.rightBumper().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kFeederStation));
+        gamepad2.povDown().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kLevel1));
+        gamepad2.povLeft().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kLevel2));
+        gamepad2.povRight().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kLevel3));
+        gamepad2.povUp().whileTrue(lift_subsystem.setPositionCmd(Setpoint.kLevel4));
 
 
         drivetrain.registerTelemetry(logger::telemeterize);
