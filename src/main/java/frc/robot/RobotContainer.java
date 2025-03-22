@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -31,6 +32,8 @@ import frc.robot.subsystems.LiftSubsystem.Setpoint;
 import frc.robot.commands.*;
 
 public class RobotContainer {
+    NamedCommands ppCommands = new NamedCommands();
+
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(1).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -60,6 +63,9 @@ public class RobotContainer {
     private final Command c_lift_off = new InstantCommand( () -> lift_subsystem.setPower(0) );
     private final Command c_lift_zero_enc = new InstantCommand( () -> lift_subsystem.zeroLiftPos() );
 
+
+    
+
     //private final Command c_algae_in = new InstantCommand( () -> algaeArmSubsystem.setIntakePower(ManipulatorConstants.algae_intake_speed));
     //private final Command c_algae_out = new InstantCommand( () -> algaeArmSubsystem.setIntakePower(-ManipulatorConstants.algae_intake_speed));
     //private final Command c_algae_off = new InstantCommand( () -> algaeArmSubsystem.setIntakePower(0));
@@ -72,6 +78,10 @@ public class RobotContainer {
 
 
     public RobotContainer() {
+        ppCommands.registerCommand("LiftTo4", lift_subsystem.setPositionCmd(Setpoint.kLevel4));
+        ppCommands.registerCommand("LiftTopickup", lift_subsystem.setPositionCmd(Setpoint.kFeederStation));
+        ppCommands.registerCommand("ChuteOn", chuteSubsystem.startOuttake());
+        ppCommands.registerCommand("ChuteOff", chuteSubsystem.chuteOff());
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Mode", autoChooser);
         CameraServer.startAutomaticCapture();
@@ -84,8 +94,8 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-gamepad1.getLeftY() * MaxSpeed * (SmartDashboard.getNumber("Lift Position", 101) > 100 ? .1 : 1)) // Drive forward with negative Y (forward)
-                    .withVelocityY(-gamepad1.getLeftX() * MaxSpeed * (SmartDashboard.getNumber("Lift Position", 101) > 100 ? .1 : 1)) // Drive left with negative X (left)
+                drive.withVelocityX(-gamepad1.getLeftY() * MaxSpeed ) // Drive forward with negative Y (forward)
+                    .withVelocityY(-gamepad1.getLeftX() * MaxSpeed ) // Drive left with negative X (left)
                     .withRotationalRate(-gamepad1.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
