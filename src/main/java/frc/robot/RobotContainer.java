@@ -55,7 +55,7 @@ public class RobotContainer {
 
     public LiftSubsystem lift_subsystem = new LiftSubsystem();
     public ChuteSubsystem chuteSubsystem = new ChuteSubsystem();
-    //public AlgaeArmSubsystem algaeArmSubsystem = new AlgaeArmSubsystem();
+    public AlgaeArmSubsystem algaeArmSubsystem = new AlgaeArmSubsystem();
 
     //private final double liftpow = .75;
     private final Command c_lift_up = new InstantCommand( () -> lift_subsystem.setPower(LiftConstants.lift_manual_speed) );
@@ -66,9 +66,9 @@ public class RobotContainer {
 
     
 
-    //private final Command c_algae_in = new InstantCommand( () -> algaeArmSubsystem.setIntakePower(ManipulatorConstants.algae_intake_speed));
-    //private final Command c_algae_out = new InstantCommand( () -> algaeArmSubsystem.setIntakePower(-ManipulatorConstants.algae_intake_speed));
-    //private final Command c_algae_off = new InstantCommand( () -> algaeArmSubsystem.setIntakePower(0));
+    private final Command c_algae_in = new InstantCommand( () -> algaeArmSubsystem.setIntakePower(ManipulatorConstants.algae_intake_speed));
+    private final Command c_algae_out = new InstantCommand( () -> algaeArmSubsystem.setIntakePower(-ManipulatorConstants.algae_intake_speed));
+    private final Command c_algae_off = new InstantCommand( () -> algaeArmSubsystem.setIntakePower(0));
     //
     //private final Command c_algae_arm_up = new InstantCommand( () -> algaeArmSubsystem.setArmPower(ManipulatorConstants.algae_arm_speed));
     //private final Command c_algae_arm_down = new InstantCommand( () -> algaeArmSubsystem.setArmPower(-ManipulatorConstants.algae_arm_speed));
@@ -105,7 +105,14 @@ public class RobotContainer {
                 () -> chuteSubsystem.setPower((gamepad2.getRightTriggerAxis()-gamepad2.getLeftTriggerAxis()) * ManipulatorConstants.chute_speed), chuteSubsystem
             )
         );
-//
+        //
+        algaeArmSubsystem.setDefaultCommand(
+            new InstantCommand( 
+                () -> algaeArmSubsystem.setIntakePower(-MathUtil.applyDeadband(gamepad2.getRightY(), .1) * ManipulatorConstants.algae_intake_speed), algaeArmSubsystem
+            )
+        );
+
+
         //algaeArmSubsystem.setDefaultCommand(
         //    new InstantCommand( 
         //        () -> algaeArmSubsystem.setArmPower(-gamepad2.getLeftY() * ManipulatorConstants.algae_arm_speed), algaeArmSubsystem

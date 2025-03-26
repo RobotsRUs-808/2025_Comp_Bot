@@ -14,14 +14,14 @@ import frc.robot.Constants.ManipulatorConstants;
 
 public class AlgaeArmSubsystem extends SubsystemBase {
     TalonFX m_algae_intake_motor = new TalonFX(ManipulatorConstants.algae_intake_motor_id);
-    TalonFX m_algae_arm_motor = new TalonFX(ManipulatorConstants.algae_arm_motor_id);
+    //TalonFX m_algae_arm_motor = new TalonFX(ManipulatorConstants.algae_arm_motor_id);
 
   /** Creates a new AlgaeArmSubsystem. */
   public AlgaeArmSubsystem() {    
     m_algae_intake_motor.getConfigurator().apply(
         new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive).withNeutralMode(NeutralModeValue.Brake));
-    m_algae_arm_motor.getConfigurator().apply(
-        new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive).withNeutralMode(NeutralModeValue.Brake));
+    //m_algae_arm_motor.getConfigurator().apply(
+    //    new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive).withNeutralMode(NeutralModeValue.Brake));
 
   }
 
@@ -35,15 +35,15 @@ public class AlgaeArmSubsystem extends SubsystemBase {
     m_algae_intake_motor.set(0);
   }
 
-  public void setArmPower(double pow)
-  {
-    m_algae_arm_motor.set(pow);
-  }
-
-  public void turnArmOff()
-  {
-    m_algae_arm_motor.set(0);
-  }
+  //public void setArmPower(double pow)
+  //{
+  //  m_algae_arm_motor.set(pow);
+  //}
+//
+  //public void turnArmOff()
+  //{
+  //  m_algae_arm_motor.set(0);
+  //}
 
   /**
    * Example command factory method.

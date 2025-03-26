@@ -28,7 +28,7 @@ public class Constants {
     {
         public static final int chute_motor_id          = 42;
         public static final int algae_intake_motor_id   = 43;
-        public static final int algae_arm_motor_id      = 44;
+        //public static final int algae_arm_motor_id      = 44;
 
         public static final boolean chute_inverted = false;
         public static final boolean algae_intake_inverted = false;
